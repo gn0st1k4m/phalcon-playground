@@ -30,6 +30,6 @@ class Bootstrap
 
     public function run()
     {
-
+        print_r($this->config->toArray());
     }
 }
