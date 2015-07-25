@@ -1,0 +1,22 @@
+{
+    "name"             : "mamuz/phalcon-playground",
+    "type"             : "project",
+    "minimum-stability": "dev",
+    "prefer-stable"    : true,
+    "require"          : {
+        "php": ">=5.4"
+    },
+    "require-dev"      : {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload"         : {
+        "psr-4": {
+            "Phpg\\": "src/"
+        }
+    },
+    "autoload-dev"     : {
+        "psr-4": {
+            "PhpgTest\\": "tests/"
+        }
+    }
+}
