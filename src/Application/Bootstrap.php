@@ -4,19 +4,16 @@ namespace Phpg\Application;
 
 use Phalcon\Config;
 use Phalcon\Di;
-use Phalcon\Loader;
+use Phalcon\Events;
 use Phalcon\Mvc;
 
 class Bootstrap
 {
-    /** @var Config */
+    /** @var array */
     private $config;
 
     /** @var Di */
     private $di;
-
-    /** @var Mvc\Application */
-    private $application;
 
     /**
      * @param string $configGlobPath
@@ -25,7 +22,16 @@ class Bootstrap
     {
         $this->createConfigFrom($configGlobPath);
         $this->createDi();
-        $this->createApplication();
+    }
+
+    /**
+     * @param string $configGlobPath
+     * @return Mvc\Application
+     */
+    public static function init($configGlobPath)
+    {
+        $self = new self($configGlobPath);
+        return $self->createApplication();
     }
 
     /**
@@ -33,61 +39,25 @@ class Bootstrap
      */
     private function createConfigFrom($configGlobPath)
     {
-        $this->config = new Config;
+        $config = new Config;
         foreach (glob($configGlobPath, GLOB_BRACE) as $file) {
-            $this->config->merge(new Config(require $file));
+            $config->merge(new Config(require $file));
         }
+
+        $this->config = $config->toArray();
     }
 
     private function createDi()
     {
-        $this->di = new Di\FactoryDefault;
-
-        $this->di->set(
-            'router',
-            function () {
-                $router = new Mvc\Router(false);
-                $router->setUriSource(Mvc\Router::URI_SOURCE_SERVER_REQUEST_URI);
-                $routes = $this->config->application->routes->toArray();
-                foreach ($routes as $route) {
-                    $router->add(
-                        $route['pattern'],
-                        isset($route['paths']) ? $route['paths'] : null,
-                        isset($route['httpMethods']) ? $route['httpMethods'] : null
-                    );
-                }
-                return $router;
-            },
-            true
-        );
-
-        $this->di->set(
-            'view',
-            function () {
-                $view = new Mvc\View;
-                $view->setViewsDir($this->config->application->viewsDir);
-                return $view;
-            }
-        );
-
-        $this->di->set(
-            'dispatcher',
-            function () {
-                $dispatcher = new Mvc\Dispatcher;
-                $dispatcher->setControllerSuffix(null);
-                $dispatcher->setDefaultNamespace($this->config->application->dispatcher->defaultNamespace);
-                return $dispatcher;
-            }
-        );
+        $diFactory = new DiFactory($this->config);
+        $this->di = $diFactory->create();
     }
 
-    private function createApplication()
+    /**
+     * @return Mvc\Application
+     */
+    public function createApplication()
     {
-        $this->application = new Mvc\Application($this->di);
-    }
-
-    public function run()
-    {
-        echo $this->application->handle()->getContent();
+        return MvcFactory::createWith($this->di);
     }
 }
