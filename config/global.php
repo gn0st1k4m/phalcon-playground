@@ -1,7 +1,7 @@
 <?php
 
 return array(
-    'routes' => array(
+    'routes'    => array(
         array(
             'pattern'     => '/:controller/:action',
             'paths'       => array(
@@ -21,6 +21,12 @@ return array(
         ),
     ),
     'injectors' => array(
-        ''
+        'Phpg\Application\Injector\Logger',
+    ),
+    'loggers'   => array(
+        array(
+            'adapter' => 'Phalcon\Logger\Adapter\File',
+            'name'    => './data/log/error.log',
+        ),
     ),
 );
