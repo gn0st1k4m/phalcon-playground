@@ -20,4 +20,7 @@ return array(
             'httpMethods' => null,
         ),
     ),
+    'injectors' => array(
+        ''
+    ),
 );

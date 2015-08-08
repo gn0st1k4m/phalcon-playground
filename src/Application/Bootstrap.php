@@ -49,8 +49,8 @@ class Bootstrap
 
     private function createDi()
     {
-        $diFactory = new DiFactory($this->config);
-        $this->di = $diFactory->create();
+        $diBuilder = new DiBuilder($this->config);
+        $this->di = $diBuilder->create();
     }
 
     /**
