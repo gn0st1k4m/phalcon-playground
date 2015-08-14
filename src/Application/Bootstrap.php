@@ -2,62 +2,75 @@
 
 namespace Phpg\Application;
 
+use Phalcon\Cli\Console;
 use Phalcon\Config;
-use Phalcon\Di;
-use Phalcon\Events;
-use Phalcon\Mvc;
+use Phalcon\Di\FactoryDefault\Cli;
+use Phalcon\Mvc\Application;
 
 class Bootstrap
 {
     /** @var array */
     private $config;
 
-    /** @var Di */
-    private $di;
+    /** @var bool */
+    private $isConsole;
 
     /**
-     * @param string $configGlobPath
+     * @param array $config
+     * @param bool $isConsole
      */
-    public function __construct($configGlobPath)
+    private function __construct(array $config, $isConsole)
     {
-        $this->createConfigFrom($configGlobPath);
-        $this->createDi();
+        $this->config = $config;
+        $this->isConsole = $isConsole;
     }
 
     /**
      * @param string $configGlobPath
-     * @return Mvc\Application
+     * @return Bootstrap
      */
     public static function init($configGlobPath)
-    {
-        $self = new self($configGlobPath);
-        return $self->createApplication();
-    }
-
-    /**
-     * @param $configGlobPath
-     */
-    private function createConfigFrom($configGlobPath)
     {
         $config = new Config;
         foreach (glob($configGlobPath, GLOB_BRACE) as $file) {
             $config->merge(new Config(require $file));
         }
 
-        $this->config = $config->toArray();
+        return new self($config->toArray(), php_sapi_name() == "cli");
     }
 
-    private function createDi()
+    public function runApplication()
     {
-        $diBuilder = new DiBuilder($this->config);
-        $this->di = $diBuilder->create();
+        if ($this->isConsole) {
+            $this->createConsoleApplication()->handle($_SERVER['argv']);
+        } else {
+            $response = $this->createMvcApplication()->handle();
+            if ($response instanceof \Phalcon\Http\ResponseInterface) {
+                echo $response->getContent();
+            }
+        }
     }
 
     /**
-     * @return Mvc\Application
+     * @return Application
      */
-    public function createApplication()
+    private function createMvcApplication()
     {
-        return MvcFactory::createWith($this->di);
+        $diBuilder = new DiBuilder($this->config);
+        $di = $diBuilder->create();
+
+        return new Application($di);
+    }
+
+    /**
+     * @return Console
+     */
+    private function createConsoleApplication()
+    {
+        $diBuilder = new DiBuilder($this->config, new Cli);
+        $di = $diBuilder->create();
+
+        return new Console($di);
     }
 }
+
