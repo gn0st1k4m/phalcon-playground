@@ -42,10 +42,13 @@ class Bootstrap
         return new self($config->read(), php_sapi_name() == "cli");
     }
 
-    public function runApplication()
+    /**
+     * @param array $server
+     */
+    public function runApplicationOn(array $server)
     {
         if ($this->isConsole) {
-            $arguments = CliHelper::extractArgumentsFrom($_SERVER['argv']);
+            $arguments = CliHelper::extractArgumentsFrom($server['argv']);
             $this->createCliApplication()->handle($arguments);
         } else {
             $response = $this->createMvcApplication()->handle();
