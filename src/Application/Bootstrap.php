@@ -56,10 +56,7 @@ class Bootstrap
      */
     private function createMvcApplication()
     {
-        $diBuilder = new DiBuilder($this->config);
-        $di = $diBuilder->create();
-
-        return new Application($di);
+        return new Application($this->createDi());
     }
 
     /**
@@ -67,10 +64,17 @@ class Bootstrap
      */
     private function createConsoleApplication()
     {
-        $diBuilder = new DiBuilder($this->config, new Cli);
-        $di = $diBuilder->create();
+        return new Console($this->createDi());
+    }
 
-        return new Console($di);
+    /**
+     * @return \Phalcon\Di
+     */
+    private function createDi()
+    {
+        $diBuilder = new DiBuilder($this->config, $this->isConsole ? new Cli : null);
+
+        return $diBuilder->create();
     }
 }
 
