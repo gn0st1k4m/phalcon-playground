@@ -1,8 +1,8 @@
 <?php
 
 return array(
-    'routes'    => array(
-        array(
+    'routes'   => array(
+        'default' => array(
             'pattern'     => '/:controller/:action',
             'paths'       => array(
                 'controller' => 1,
@@ -10,7 +10,7 @@ return array(
             ),
             'httpMethods' => null,
         ),
-        array(
+        'admin'   => array(
             'pattern'     => '/admin/:controller/:action',
             'paths'       => array(
                 'namespace'  => 'Phpg\Application\Controller\Admin',
@@ -20,11 +20,11 @@ return array(
             'httpMethods' => null,
         ),
     ),
-    'injectors' => array(
-        'Phpg\Application\Injector\Logger',
+    'services' => array(
+        'logger' => 'Phpg\Application\Service\Logger',
     ),
-    'loggers'   => array(
-        array(
+    'loggers'  => array(
+        'file' => array(
             'adapter' => 'Phalcon\Logger\Adapter\File',
             'name'    => './data/log/error.log',
         ),

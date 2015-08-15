@@ -46,7 +46,7 @@ class Bootstrap
         } else {
             $response = $this->createMvcApplication()->handle();
             if ($response instanceof \Phalcon\Http\ResponseInterface) {
-                echo $response->getContent();
+                $response->send();
             }
         }
     }

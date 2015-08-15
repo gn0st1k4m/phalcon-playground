@@ -1,10 +1,10 @@
 <?php
 
-namespace Phpg\Application\Injector;
+namespace Phpg\Application\Service;
 
 use Phalcon\Di;
 
-interface InjectorInterface
+interface InjectableInterface
 {
     public static function injectTo(Di $di);
 }

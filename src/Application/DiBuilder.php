@@ -49,10 +49,10 @@ class DiBuilder
             return DispatcherFactory::createWith($this->di);
         });
 
-        /** @var Injector\InjectorInterface[] $injectors */
-        $injectors = isset($this->config['injectors']) ? $this->config['injectors'] : array();
-        foreach ($injectors as $injector) {
-            $injector::injectTo($this->di);
+        /** @var Service\InjectableInterface[] $services */
+        $services = isset($this->config['services']) ? $this->config['services'] : array();
+        foreach ($services as $service) {
+            $service::injectTo($this->di);
         }
 
         return $this->di;
