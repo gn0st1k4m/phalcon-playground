@@ -74,7 +74,7 @@ class DispatcherBuilder
         $dispatcher = new Cli\Dispatcher;
         $dispatcher->setEventsManager($this->createEventManagerForCli($di));
         $dispatcher->setTaskSuffix(null);
-        $dispatcher->setDefaultNamespace(__NAMESPACE__ . '\Command');
+        $dispatcher->setDefaultNamespace(__NAMESPACE__ . '\Task');
 
         return $dispatcher;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpg\Application\Command;
+namespace Phpg\Application\Task;
 
 use Phalcon\Cli\Task;
 
