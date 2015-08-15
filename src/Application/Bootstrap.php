@@ -3,7 +3,6 @@
 namespace Phpg\Application;
 
 use Phalcon\Cli\Console;
-use Phalcon\Config;
 use Phalcon\Di\FactoryDefault\Cli;
 use Phalcon\Mvc\Application;
 
@@ -26,17 +25,15 @@ class Bootstrap
     }
 
     /**
-     * @param string $configGlobPath
+     * @param string $env
+     * @param string |null $configCacheFile
      * @return Bootstrap
      */
-    public static function init($configGlobPath)
+    public static function init($env, $configCacheFile = null)
     {
-        $config = new Config;
-        foreach (glob($configGlobPath, GLOB_BRACE) as $file) {
-            $config->merge(new Config(require $file));
-        }
+        $config = new Config($env, $configCacheFile);
 
-        return new self($config->toArray(), php_sapi_name() == "cli");
+        return new self($config->read(), php_sapi_name() == "cli");
     }
 
     public function runApplication()

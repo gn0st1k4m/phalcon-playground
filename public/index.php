@@ -8,6 +8,6 @@ chdir(dirname(__DIR__));
 include 'vendor/autoload.php';
 
 $env = getenv('APPLICATION_ENV') ?: 'production';
-$configGlobPath = sprintf('config/{,*.}{global,%s,local}.php', $env);
+$configCache = './data/cache/config.php';
 
-Phpg\Application\Bootstrap::init($configGlobPath)->runApplication();
+Phpg\Application\Bootstrap::init($env, $configCache)->runApplication();

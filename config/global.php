@@ -1,32 +1,32 @@
 <?php
 
-return array(
-    'routes'   => array(
-        'default' => array(
+return [
+    'routes'   => [
+        'default' => [
             'pattern'     => '/:controller/:action',
-            'paths'       => array(
+            'paths'       => [
                 'controller' => 1,
                 'action'     => 2,
-            ),
+            ],
             'httpMethods' => null,
-        ),
-        'admin'   => array(
+        ],
+        'admin'   => [
             'pattern'     => '/admin/:controller/:action',
-            'paths'       => array(
+            'paths'       => [
                 'namespace'  => 'Phpg\Application\Controller\Admin',
                 'controller' => 1,
                 'action'     => 2,
-            ),
+            ],
             'httpMethods' => null,
-        ),
-    ),
-    'services' => array(
+        ],
+    ],
+    'services' => [
         'logger' => 'Phpg\Application\Service\Logger',
-    ),
-    'loggers'  => array(
-        'file' => array(
+    ],
+    'loggers'  => [
+        'file' => [
             'adapter' => 'Phalcon\Logger\Adapter\File',
             'name'    => './data/log/error.log',
-        ),
-    ),
-);
+        ],
+    ],
+];
