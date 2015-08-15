@@ -4,57 +4,87 @@ namespace Phpg\Application;
 
 use Phalcon\Config;
 use Phalcon\Di;
-use Phalcon\Events;
-use Phalcon\Mvc;
 
 class DiBuilder
 {
     /** @var array */
     private $config;
 
-    /** @var Di */
-    private $di;
+    /** @var DispatcherBuilder */
+    private $dispatchBuilder;
 
     /**
      * @param array $config
-     * @param Di $prototype
      */
-    public function __construct(array $config, Di $prototype = null)
+    public function __construct(array $config)
     {
         $this->config = $config;
-        $this->di = $prototype ?: new Di\FactoryDefault;
+        $this->dispatchBuilder = new DispatcherBuilder;
     }
 
     /**
      * @return Di
      */
-    public function create()
+    public function createForMvc()
     {
-        $this->di->set('config', function () {
-            return new Config($this->config);
-        });
+        $di = new Di\FactoryDefault;
 
-        $this->di->setShared('router', function () {
+        $this->injectConfigTo($di);
+
+        $di->setShared('router', function () {
             $routes = isset($this->config['routes']) ? $this->config['routes'] : array();
             return RouterFactory::createFrom($routes);
         });
 
-        $this->di->setShared('view', function () {
-            $view = new Mvc\View;
+        $di->setShared('view', function () {
+            $view = new \Phalcon\Mvc\View;
             $view->setViewsDir('./view/');
             return $view;
         });
 
-        $this->di->setShared('dispatcher', function () {
-            return DispatcherFactory::createWith($this->di);
+        $di->setShared('dispatcher', function () use ($di) {
+            return $this->dispatchBuilder->createForMvcWith($di);
         });
 
+        $this->injectServicesTo($di);
+
+        return $di;
+    }
+
+    /**
+     * @return Di
+     */
+    public function createForCli()
+    {
+        $di = new Di\FactoryDefault\Cli;
+
+        $this->injectConfigTo($di);
+
+        $di->setShared('dispatcher', function () use ($di) {
+            return $this->dispatchBuilder->createForCliWith($di);
+        });
+
+        $this->injectServicesTo($di);
+
+        return $di;
+    }
+
+    /**
+     * @param Di $di
+     */
+    private function injectConfigTo(Di $di)
+    {
+        $di->set('config', function () {
+            return new Config($this->config);
+        });
+    }
+
+    private function injectServicesTo(Di $di)
+    {
         /** @var Service\InjectableInterface[] $services */
         $services = isset($this->config['services']) ? $this->config['services'] : array();
         foreach ($services as $service) {
-            $service::injectTo($this->di);
+            $service::injectTo($di);
         }
-
-        return $this->di;
     }
 }

@@ -6,5 +6,8 @@ use Phalcon\Di;
 
 interface InjectableInterface
 {
+    /**
+     * @param Di $di
+     */
     public static function injectTo(Di $di);
 }

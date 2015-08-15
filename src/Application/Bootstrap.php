@@ -14,6 +14,9 @@ class Bootstrap
     /** @var bool */
     private $isConsole;
 
+    /** @var DiBuilder */
+    private $diBuilder;
+
     /**
      * @param array $config
      * @param bool $isConsole
@@ -22,6 +25,7 @@ class Bootstrap
     {
         $this->config = $config;
         $this->isConsole = $isConsole;
+        $this->diBuilder = new DiBuilder($this->config);
     }
 
     /**
@@ -39,7 +43,7 @@ class Bootstrap
     public function runApplication()
     {
         if ($this->isConsole) {
-            $this->createConsoleApplication()->handle($_SERVER['argv']);
+            $this->createCliApplication()->handle($_SERVER['argv']);
         } else {
             $response = $this->createMvcApplication()->handle();
             if ($response instanceof \Phalcon\Http\ResponseInterface) {
@@ -53,25 +57,15 @@ class Bootstrap
      */
     private function createMvcApplication()
     {
-        return new Application($this->createDi());
+        return new Application($this->diBuilder->createForMvc());
     }
 
     /**
      * @return Console
      */
-    private function createConsoleApplication()
+    private function createCliApplication()
     {
-        return new Console($this->createDi());
-    }
-
-    /**
-     * @return \Phalcon\Di
-     */
-    private function createDi()
-    {
-        $diBuilder = new DiBuilder($this->config, $this->isConsole ? new Cli : null);
-
-        return $diBuilder->create();
+        return new Console($this->diBuilder->createForCli());
     }
 }
 

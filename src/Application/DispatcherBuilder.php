@@ -2,20 +2,21 @@
 
 namespace Phpg\Application;
 
+use Phalcon\Cli;
 use Phalcon\Di;
 use Phalcon\Events;
 use Phalcon\Mvc;
 
-class DispatcherFactory
+class DispatcherBuilder
 {
     /**
      * @param Di $di
      * @return Mvc\Dispatcher
      */
-    public static function createWith(Di $di)
+    public function createForMvcWith(Di $di)
     {
         $dispatcher = new Mvc\Dispatcher;
-        $dispatcher->setEventsManager(self::createEventManager($di));
+        $dispatcher->setEventsManager($this->createEventManagerForMvc($di));
         $dispatcher->setControllerSuffix(null);
         $dispatcher->setDefaultNamespace(__NAMESPACE__ . '\Controller');
 
@@ -26,9 +27,9 @@ class DispatcherFactory
      * @param Di $di
      * @return Events\Manager
      */
-    private static function createEventManager(Di $di)
+    private function createEventManagerForMvc(Di $di)
     {
-        $eventsManager = new Events\Manager();
+        $eventsManager = $this->createEventManager();
 
         $eventsManager->attach(
             "dispatch:afterExecuteRoute",
@@ -62,5 +63,48 @@ class DispatcherFactory
         );
 
         return $eventsManager;
+    }
+
+    /**
+     * @param Di $di
+     * @return Cli\Dispatcher
+     */
+    public function createForCliWith(Di $di)
+    {
+        $dispatcher = new Cli\Dispatcher;
+        $dispatcher->setEventsManager($this->createEventManagerForCli($di));
+        $dispatcher->setTaskSuffix(null);
+        $dispatcher->setDefaultNamespace(__NAMESPACE__ . '\Command');
+
+        return $dispatcher;
+    }
+
+    /**
+     * @param Di $di
+     * @return Events\Manager
+     */
+    private function createEventManagerForCli(Di $di)
+    {
+        $eventsManager = $this->createEventManager();
+
+        $eventsManager->attach(
+            "dispatch:beforeException",
+            function (Events\Event $event, Cli\Dispatcher $dispatcher, \Exception $e) use ($di) {
+                /** @var \Phalcon\Logger\Adapter $logger */
+                $logger = $di->get('logger');
+                $logger->error($e->getMessage());
+                return false;
+            }
+        );
+
+        return $eventsManager;
+    }
+
+    /**
+     * @return Events\Manager
+     */
+    private function createEventManager()
+    {
+        return new Events\Manager();
     }
 }
