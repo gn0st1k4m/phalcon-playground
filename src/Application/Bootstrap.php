@@ -3,9 +3,7 @@
 namespace Phpg\Application;
 
 use Phalcon\Cli\Console;
-use Phalcon\Di\FactoryDefault\Cli;
 use Phalcon\Mvc\Application;
-use Phpg\Application\Factory\DependencyInjector as DiFactory;
 use Phpg\Application\Service\CliHelper;
 
 class Bootstrap
@@ -16,22 +14,22 @@ class Bootstrap
     /** @var bool */
     private $isConsole;
 
-    /** @var DiFactory */
-    private $diBuilder;
+    /** @var DependencyInjector */
+    private $di;
 
     /**
      * @param array $config
-     * @param bool $isConsole
+     * @param bool  $isConsole
      */
     private function __construct(array $config, $isConsole)
     {
         $this->config = $config;
         $this->isConsole = $isConsole;
-        $this->diBuilder = new DiFactory($this->config);
+        $this->di = new DependencyInjector($this->config);
     }
 
     /**
-     * @param string $env
+     * @param string       $env
      * @param string |null $configCacheFile
      * @return Bootstrap
      */
@@ -63,7 +61,7 @@ class Bootstrap
      */
     private function createMvcApplication()
     {
-        return new Application($this->diBuilder->createForMvc());
+        return new Application($this->di->createForMvc());
     }
 
     /**
@@ -71,7 +69,7 @@ class Bootstrap
      */
     private function createCliApplication()
     {
-        return new Console($this->diBuilder->createForCli());
+        return new Console($this->di->createForCli());
     }
 }
 

@@ -1,9 +1,10 @@
 <?php
 
-namespace Phpg\Application\Factory;
+namespace Phpg\Application;
 
 use Phalcon\Config;
 use Phalcon\Di;
+use Phpg\Application\Factory\DispatchEventsManager;
 use Phpg\Application\Service\InjectableInterface;
 
 class DependencyInjector
@@ -30,7 +31,7 @@ class DependencyInjector
 
         $di->setShared('router', function () {
             $routes = isset($this->config['routes']) ? $this->config['routes'] : array();
-            return Router::createFrom($routes);
+            return Factory\Router::createFrom($routes);
         });
 
         $di->setShared('view', function () {
@@ -39,9 +40,11 @@ class DependencyInjector
             return $view;
         });
 
-        $di->setShared('dispatcher', function () use ($di) {
-            return MvcDispatcher::createWith($di);
-        });
+        /** @var \Phalcon\Mvc\Dispatcher $dispatcher */
+        $dispatcher = $di->get('dispatcher');
+        $dispatcher->setEventsManager(DispatchEventsManager::create());
+        $dispatcher->setControllerSuffix(null);
+        $dispatcher->setDefaultNamespace(__NAMESPACE__ . '\\Controller');
 
         $this->injectServicesTo($di);
 
@@ -57,9 +60,11 @@ class DependencyInjector
 
         $this->injectConfigTo($di);
 
-        $di->setShared('dispatcher', function () use ($di) {
-            return CliDispatcher::createWith($di);
-        });
+        /** @var \Phalcon\Cli\Dispatcher $dispatcher */
+        $dispatcher = $di->get('dispatcher');
+        $dispatcher->setEventsManager(DispatchEventsManager::create());
+        $dispatcher->setTaskSuffix(null);
+        $dispatcher->setDefaultNamespace(__NAMESPACE__ . '\\Task');
 
         $this->injectServicesTo($di);
 

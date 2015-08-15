@@ -13,7 +13,7 @@ class Config
     private $configGlobPath;
 
     /**
-     * @param string $env
+     * @param string        $env
      * @param string | null $cacheFile
      */
     public function __construct($env, $cacheFile = null)
