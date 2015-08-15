@@ -13,8 +13,7 @@
   },
   "require-dev": {
     "phpunit/phpunit": "~4.6",
-    "codeception/codeception": "~2.1",
-    "phalcon/devtools": "~2.0"
+    "codeception/codeception": "~2.1"
   },
   "autoload": {
     "psr-4": {
@@ -25,5 +24,13 @@
     "psr-4": {
       "PhpgTest\\": "tests/"
     }
+  },
+  "scripts": {
+    "post-create-project-cmd": [
+      "cat \"development\" > ./ENV",
+      "mkdir -m 777 ./data/{cache,log}",
+      "composer global require \"phalcon/devtools:~2.0\"",
+      "echo \"Be sure ~/.composer/vendor/phalcon/devtools/ide/2.* is added as external library in your IDE\""
+    ]
   }
 }

@@ -1,3 +1,5 @@
 composer.lock
+data
 vendor
 tests/_output/*
+ENV
