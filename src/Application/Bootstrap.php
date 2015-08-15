@@ -6,6 +6,7 @@ use Phalcon\Cli\Console;
 use Phalcon\Di\FactoryDefault\Cli;
 use Phalcon\Mvc\Application;
 use Phpg\Application\Factory\DependencyInjector as DiFactory;
+use Phpg\Application\Service\CliHelper;
 
 class Bootstrap
 {
@@ -44,7 +45,8 @@ class Bootstrap
     public function runApplication()
     {
         if ($this->isConsole) {
-            $this->createCliApplication()->handle($_SERVER['argv']);
+            $arguments = CliHelper::extractArgumentsFrom($_SERVER['argv']);
+            $this->createCliApplication()->handle($arguments);
         } else {
             $response = $this->createMvcApplication()->handle();
             if ($response instanceof \Phalcon\Http\ResponseInterface) {
