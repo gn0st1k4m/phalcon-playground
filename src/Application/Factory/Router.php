@@ -1,19 +1,20 @@
 <?php
 
-namespace Phpg\Application;
+namespace Phpg\Application\Factory;
 
-use Phalcon\Mvc\Router;
+use Phalcon\Mvc\Router as MvcRouter;
 
-class RouterFactory
+class Router
 {
     /**
      * @param array $routes
-     * @return Router
+     * @return MvcRouter
      */
     public static function createFrom(array $routes)
     {
-        $router = new Router(false);
-        $router->setUriSource(Router::URI_SOURCE_SERVER_REQUEST_URI);
+        $router = new MvcRouter(false);
+        $router->setUriSource(MvcRouter::URI_SOURCE_SERVER_REQUEST_URI);
+
         foreach ($routes as $route) {
             $router->add(
                 $route['pattern'],
@@ -21,6 +22,7 @@ class RouterFactory
                 isset($route['httpMethods']) ? $route['httpMethods'] : null
             );
         }
+
         return $router;
     }
 }

@@ -1,17 +1,15 @@
 <?php
 
-namespace Phpg\Application;
+namespace Phpg\Application\Factory;
 
 use Phalcon\Config;
 use Phalcon\Di;
+use Phpg\Application\Service\InjectableInterface;
 
-class DiBuilder
+class DependencyInjector
 {
     /** @var array */
     private $config;
-
-    /** @var DispatcherBuilder */
-    private $dispatchBuilder;
 
     /**
      * @param array $config
@@ -19,7 +17,6 @@ class DiBuilder
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->dispatchBuilder = new DispatcherBuilder;
     }
 
     /**
@@ -33,7 +30,7 @@ class DiBuilder
 
         $di->setShared('router', function () {
             $routes = isset($this->config['routes']) ? $this->config['routes'] : array();
-            return RouterFactory::createFrom($routes);
+            return Router::createFrom($routes);
         });
 
         $di->setShared('view', function () {
@@ -43,7 +40,7 @@ class DiBuilder
         });
 
         $di->setShared('dispatcher', function () use ($di) {
-            return $this->dispatchBuilder->createForMvcWith($di);
+            return MvcDispatcher::createWith($di);
         });
 
         $this->injectServicesTo($di);
@@ -61,7 +58,7 @@ class DiBuilder
         $this->injectConfigTo($di);
 
         $di->setShared('dispatcher', function () use ($di) {
-            return $this->dispatchBuilder->createForCliWith($di);
+            return CliDispatcher::createWith($di);
         });
 
         $this->injectServicesTo($di);
@@ -81,7 +78,7 @@ class DiBuilder
 
     private function injectServicesTo(Di $di)
     {
-        /** @var Service\InjectableInterface[] $services */
+        /** @var InjectableInterface[] $services */
         $services = isset($this->config['services']) ? $this->config['services'] : array();
         foreach ($services as $service) {
             $service::injectTo($di);

@@ -5,6 +5,7 @@ namespace Phpg\Application;
 use Phalcon\Cli\Console;
 use Phalcon\Di\FactoryDefault\Cli;
 use Phalcon\Mvc\Application;
+use Phpg\Application\Factory\DependencyInjector as DiFactory;
 
 class Bootstrap
 {
@@ -14,7 +15,7 @@ class Bootstrap
     /** @var bool */
     private $isConsole;
 
-    /** @var DiBuilder */
+    /** @var DiFactory */
     private $diBuilder;
 
     /**
@@ -25,7 +26,7 @@ class Bootstrap
     {
         $this->config = $config;
         $this->isConsole = $isConsole;
-        $this->diBuilder = new DiBuilder($this->config);
+        $this->diBuilder = new DiFactory($this->config);
     }
 
     /**
@@ -35,7 +36,7 @@ class Bootstrap
      */
     public static function init($env, $configCacheFile = null)
     {
-        $config = new Config($env, $configCacheFile);
+        $config = new Service\Config($env, $configCacheFile);
 
         return new self($config->read(), php_sapi_name() == "cli");
     }

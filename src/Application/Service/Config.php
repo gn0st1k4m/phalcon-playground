@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpg\Application;
+namespace Phpg\Application\Service;
 
 use Phalcon\Config as Container;
 
