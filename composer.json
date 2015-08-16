@@ -26,13 +26,10 @@
     }
   },
   "scripts": {
-    "post-create-project-cmd": [
-      "touch ./ENV && cat \"development\" > ./ENV",
-      "mkdir -m 777 ./data/{cache,log}",
-      "mv -f ./.md-template/* . && rm -rf ./.mdtemplates",
-      "composer global require \"phalcon/devtools:~2.0\"",
-      "echo \"Be sure ~/.composer/vendor/phalcon/devtools/ide/2.* is added as external library in your IDE\"",
-      "echo print \"sh ./scripts/rename-project.sh\" to rename namespaces"
+    "post-install-cmd": [
+      "echo \"development\" > ./ENV",
+      "mkdir -pm 777 ./data/cache",
+      "mkdir -pm 777 ./data/log"
     ]
   }
 }
