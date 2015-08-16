@@ -1,0 +1,10 @@
+{
+  "package": {
+    "name": "mamuz/phalcon-playground",
+    "version": "1.0.0",
+    "source": {
+      "type": "git",
+      "reference": "master"
+    }
+  }
+}

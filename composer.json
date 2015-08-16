@@ -1,6 +1,6 @@
 {
   "name": "mamuz/phalcon-playground",
-  "description": "",
+  "description": "project description",
   "type": "project",
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -29,8 +29,10 @@
     "post-create-project-cmd": [
       "cat \"development\" > ./ENV",
       "mkdir -m 777 ./data/{cache,log}",
+      "mv -f ./.md-template/* . && rm -rf ./.mdtemplates",
       "composer global require \"phalcon/devtools:~2.0\"",
-      "echo \"Be sure ~/.composer/vendor/phalcon/devtools/ide/2.* is added as external library in your IDE\""
+      "echo \"Be sure ~/.composer/vendor/phalcon/devtools/ide/2.* is added as external library in your IDE\"",
+      "echo print \"sh ./scripts/rename-project.sh\" to rename namespaces"
     ]
   }
 }
