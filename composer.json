@@ -7,16 +7,10 @@
   "config": {
     "optimize-autoloader": true
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/mamuz/phalcon-application"
-    }
-  ],
   "require": {
     "php": ">=5.4",
     "ext-phalcon": ">=2.0.0",
-    "mamuz/phalcon-application": "*"
+    "mamuz/phalcon-application": "~0.1"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.6",
