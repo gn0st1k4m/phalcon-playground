@@ -15,14 +15,35 @@ class Dispatch
     public function afterExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
         if ($dispatcher->getNamespaceName() !== $dispatcher->getDefaultNamespace()) {
+            /** @var \Phpg\Application\Service\View $view */
+            $view = $dispatcher->getDI()->get('view');
+
+            if ($view->isPicked()) {
+                return;
+            }
+
             $viewPathParts = array_diff(
                 explode('\\', strtolower($dispatcher->getHandlerClass())),
                 explode('\\', strtolower($dispatcher->getDefaultNamespace()))
             );
             $viewPathParts[] = $dispatcher->getActionName();
-            /** @var \Phalcon\Mvc\View $view */
-            $view = $dispatcher->getDI()->get('view');
+
             $view->pick(implode(DIRECTORY_SEPARATOR, $viewPathParts));
+        }
+    }
+
+    /**
+     * @param Event      $event
+     * @param Dispatcher $dispatcher
+     */
+    public function beforeDispatchLoop(Event $event, Dispatcher $dispatcher)
+    {
+        /** @var \Phalcon\Http\Request $request */
+        $request = $dispatcher->getDI()->get('request');
+        if ($request->isAjax()) {
+            /** @var \Phpg\Application\Service\View $view */
+            $view = $dispatcher->getDI()->get('view');
+            $view->setRenderLevel(\Phalcon\Mvc\View::LEVEL_ACTION_VIEW);
         }
     }
 

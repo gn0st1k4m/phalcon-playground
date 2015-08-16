@@ -35,7 +35,7 @@ class DependencyInjector
         });
 
         $di->setShared('view', function () {
-            $view = new \Phalcon\Mvc\View;
+            $view = new Service\View;
             $view->setViewsDir('./view/');
             return $view;
         });

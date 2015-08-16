@@ -7,8 +7,4 @@ class Index extends Base
     public function indexAction()
     {
     }
-
-    public function fooBarAction()
-    {
-    }
 }

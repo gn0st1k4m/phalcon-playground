@@ -8,16 +8,6 @@ return [
                 'controller' => 1,
                 'action'     => 2,
             ],
-            'httpMethods' => null,
-        ],
-        'admin'   => [
-            'pattern'     => '/admin/:controller/:action',
-            'paths'       => [
-                'namespace'  => 'Phpg\Application\Controller\Admin',
-                'controller' => 1,
-                'action'     => 2,
-            ],
-            'httpMethods' => null,
         ],
     ],
     'services' => [
