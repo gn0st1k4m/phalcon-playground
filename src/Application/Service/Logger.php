@@ -4,6 +4,7 @@ namespace Phpg\Application\Service;
 
 use Phalcon\Di;
 use Phalcon\Logger\Multiple;
+use Phapp\Application\Service\InjectableInterface;
 
 class Logger implements InjectableInterface
 {
