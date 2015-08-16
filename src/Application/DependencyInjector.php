@@ -81,6 +81,9 @@ class DependencyInjector
         });
     }
 
+    /**
+     * @param Di $di
+     */
     private function injectServicesTo(Di $di)
     {
         /** @var InjectableInterface[] $services */

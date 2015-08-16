@@ -72,4 +72,3 @@ class Bootstrap
         return new Console($this->di->createForCli());
     }
 }
-
