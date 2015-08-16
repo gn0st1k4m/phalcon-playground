@@ -15,15 +15,14 @@ class Dispatch
     public function afterExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
         if ($dispatcher->getNamespaceName() !== $dispatcher->getDefaultNamespace()) {
-            $subViewDir = lcfirst(
-                substr(
-                    $dispatcher->getNamespaceName(),
-                    strrpos($dispatcher->getNamespaceName(), '\\') + 1
-                )
+            $viewPathParts = array_diff(
+                explode('\\', strtolower($dispatcher->getHandlerClass())),
+                explode('\\', strtolower($dispatcher->getDefaultNamespace()))
             );
+            $viewPathParts[] = $dispatcher->getActionName();
             /** @var \Phalcon\Mvc\View $view */
             $view = $dispatcher->getDI()->get('view');
-            $view->setViewsDir($view->getViewsDir() . $subViewDir . '/');
+            $view->pick(implode(DIRECTORY_SEPARATOR, $viewPathParts));
         }
     }
 
