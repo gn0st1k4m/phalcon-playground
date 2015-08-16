@@ -27,7 +27,7 @@
   },
   "scripts": {
     "post-create-project-cmd": [
-      "cat \"development\" > ./ENV",
+      "touch ./ENV && cat \"development\" > ./ENV",
       "mkdir -m 777 ./data/{cache,log}",
       "mv -f ./.md-template/* . && rm -rf ./.mdtemplates",
       "composer global require \"phalcon/devtools:~2.0\"",
